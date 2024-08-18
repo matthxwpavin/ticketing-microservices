@@ -1,0 +1,22 @@
+mode: set
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:17.70,20.16 3 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:20.16,23.3 2 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:24.2,24.22 1 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:27.71,32.54 4 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:32.54,36.3 3 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:38.2,39.16 2 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:39.16,42.3 2 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:43.2,43.29 1 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:46.70,51.53 4 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:51.53,55.3 3 0
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:56.2,56.53 1 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:56.53,59.3 2 0
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:60.2,60.37 1 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:63.68,67.16 4 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:67.16,70.3 2 1
+github.com/matthxwpavin/ticketing/orders/internal/router/handler.go:71.2,71.24 1 1
+github.com/matthxwpavin/ticketing/orders/internal/router/router.go:23.84,29.16 4 1
+github.com/matthxwpavin/ticketing/orders/internal/router/router.go:29.16,31.3 1 0
+github.com/matthxwpavin/ticketing/orders/internal/router/router.go:32.2,33.16 2 1
+github.com/matthxwpavin/ticketing/orders/internal/router/router.go:33.16,35.3 1 0
+github.com/matthxwpavin/ticketing/orders/internal/router/router.go:36.2,48.10 8 1

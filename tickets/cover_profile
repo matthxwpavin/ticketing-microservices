@@ -1,0 +1,23 @@
+mode: set
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:18.71,21.16 3 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:21.16,24.3 2 0
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:25.2,25.29 1 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:28.72,32.60 4 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:32.60,36.3 3 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:37.2,38.16 2 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:38.16,40.3 1 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:41.2,41.32 1 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:44.72,47.60 3 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:47.60,51.3 3 0
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:52.2,53.65 2 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:53.65,56.3 2 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:59.72,61.66 2 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:61.66,63.3 1 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:66.69,69.16 3 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:69.16,72.3 2 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:73.2,73.36 1 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/handler.go:76.91,78.2 1 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/router.go:26.26,30.2 1 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/router.go:32.57,48.79 11 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/router.go:48.79,50.3 1 1
+github.com/matthxwpavin/ticketing/tickets/internal/appmux/router.go:51.2,51.12 1 1

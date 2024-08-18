@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payment
+  template:
+    metadata:
+      labels:
+        app: payment
+    spec:
+      containers:
+        - image: matthxwpavin/ticketing/payment
+          name: payment
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          env:
+            - name: MONGO_URI
+              value: "mongodb://payment-mongo-srv:27017"
+            - name: NATS_URL
+              value: "nats://nats-srv:4222"
+            - name: NATS_CONN_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: STRIPE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-secret
+                  key: STRIPE_SECRET
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-srv
+spec:
+  selector:
+    app: payment
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP

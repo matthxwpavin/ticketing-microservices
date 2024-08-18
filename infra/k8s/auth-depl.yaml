@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: matthxwpavin/ticketing/auth
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3000
+          env:
+            - name: MONGO_URI
+              value: "mongodb://auth-mongo-srv:27017"
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: NATS_URL
+              value: "nats://nats-srv:4222"
+            - name: NATS_CONN_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: DEV
+              value: "dev"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-srv
+spec:
+  selector:
+    app: auth
+  ports:
+  - port: 3000
+    targetPort: 3000
