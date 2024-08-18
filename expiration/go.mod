@@ -3,7 +3,7 @@ module github.com/matthxwpavin/ticketing/expiration
 go 1.22.4
 
 require (
-	github.com/matthxwpavin/ticketing v1.4.24
+	github.com/matthxwpavin/ticketing v1.4.26
 	github.com/redis/go-redis/v9 v9.6.1
 	github.com/stretchr/testify v1.8.4
 	go.mongodb.org/mongo-driver v1.16.0

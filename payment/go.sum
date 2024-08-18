@@ -63,6 +63,10 @@ github.com/matthxwpavin/ticketing v1.4.23 h1:/sddW1eA29ut8R3xPoGlktDY0fbWJaZP+j7
 github.com/matthxwpavin/ticketing v1.4.23/go.mod h1:lOUiLAYRNfn+UoXuCeWV74Lr2MuSz/WtLBxYzBxcoYU=
 github.com/matthxwpavin/ticketing v1.4.24 h1:pa7rZvRNVAJuODRjo77w21fJTmioqz1CCbe7PJ97eyY=
 github.com/matthxwpavin/ticketing v1.4.24/go.mod h1:lOUiLAYRNfn+UoXuCeWV74Lr2MuSz/WtLBxYzBxcoYU=
+github.com/matthxwpavin/ticketing v1.4.25 h1:1gxes5rrIUm9FzrUG8dcGdQWADhHsatMgPMxDNX2WPA=
+github.com/matthxwpavin/ticketing v1.4.25/go.mod h1:lOUiLAYRNfn+UoXuCeWV74Lr2MuSz/WtLBxYzBxcoYU=
+github.com/matthxwpavin/ticketing v1.4.26 h1:Df/QpL5zWH0Ah2oDP7CK1Aa762JQ9ZfNflXbMi9RjP0=
+github.com/matthxwpavin/ticketing v1.4.26/go.mod h1:lOUiLAYRNfn+UoXuCeWV74Lr2MuSz/WtLBxYzBxcoYU=
 github.com/montanaflynn/stats v0.7.1 h1:etflOAAHORrCC44V+aR6Ftzort912ZU+YLiSTuV8eaE=
 github.com/montanaflynn/stats v0.7.1/go.mod h1:etXPPgVO6n31NxCd9KQUMvCM+ve0ruNzt6R8Bnaayow=
 github.com/nats-io/nats.go v1.36.0 h1:suEUPuWzTSse/XhESwqLxXGuj8vGRuPRoG7MoRN/qyU=

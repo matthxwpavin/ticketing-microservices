@@ -4,7 +4,7 @@ go 1.22.4
 
 require (
 	github.com/gorilla/mux v1.8.1
-	github.com/matthxwpavin/ticketing v1.4.24
+	github.com/matthxwpavin/ticketing v1.4.26
 	github.com/stretchr/testify v1.8.4
 	go.mongodb.org/mongo-driver v1.16.0
 	golang.org/x/net v0.24.0
