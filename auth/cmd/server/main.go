@@ -30,7 +30,7 @@ func main() {
 		env.DEV,
 		env.MongoURI,
 	}); err != nil {
-		logger.Fatalw("check env error", "error", err)
+		logger.Fatalw("failed to check required environments", "error", err)
 	}
 
 	if err := run(ctx); err != nil {
@@ -55,7 +55,7 @@ func run(ctx context.Context) error {
 	// Connect to the database.
 	db, err := mongo.Connect(ctx)
 	if err != nil {
-		logger.Errorw("could not get the database", "error", err)
+		logger.Errorw("could not connect to database", "error", err)
 		return err
 	}
 	// Disconnect the database when main function returns.
