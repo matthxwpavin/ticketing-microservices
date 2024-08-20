@@ -11,11 +11,11 @@ import (
 
 var db *ordermongo.DB
 
-var loggerCtx context.Context
+var ctx context.Context
 
 func TestMain(m *testing.M) {
-	testsetup.Setup(m, &ordermongo.DbConfig, func(ctx context.Context, connected *mongo.DB) error {
-		loggerCtx = ctx
+	testsetup.Setup(m, &ordermongo.DbConfig, func(loggerCtx context.Context, connected *mongo.DB) error {
+		ctx = loggerCtx
 		db = &ordermongo.DB{DB: connected}
 		return nil
 	})

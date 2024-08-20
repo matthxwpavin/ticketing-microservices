@@ -2,7 +2,6 @@ package app
 
 import (
 	"testing"
-	"time"
 
 	"github.com/matthxwpavin/ticketing/orders/internal/database"
 	"github.com/matthxwpavin/ticketing/streaming"
@@ -14,7 +13,6 @@ import (
 func TestSubscribeTicketCreated(t *testing.T) {
 	t.Parallel()
 
-	mockClient := &nats.MockClient{}
 	msg := &streaming.TicketCreatedMessage{
 		TicketID:      primitive.NewObjectID().Hex(),
 		TicketTitle:   "some_title",
@@ -23,11 +21,16 @@ func TestSubscribeTicketCreated(t *testing.T) {
 		TicketVersion: 1,
 	}
 
-	removeErr(mockClient.TicketCreatedPublisher(loggerCtx)).Publish(loggerCtx, msg)
+	mockClient := &nats.MockClient{}
+	svc, err := NewService(ctx, db, mockClient)
+	if err != nil {
+		t.Fatalf("could not initialize service: %v", err)
+	}
+	ack := false
+	svc.handleTicketCreated(ctx)(msg, func() error { ack = true; return nil })
+	require.Equal(t, true, ack, "The ticket created message has not been acked")
 
-	consumeMessage(t, mockClient)
-
-	ticket, err := db.TicketRepository().FindByID(loggerCtx, msg.TicketID)
+	ticket, err := db.TicketRepository().FindByID(ctx, msg.TicketID)
 	require.NoError(t, err, "could not find the ticket")
 
 	eqMatching := map[any]any{
@@ -39,7 +42,7 @@ func TestSubscribeTicketCreated(t *testing.T) {
 	for got, expected := range eqMatching {
 		require.Equal(t, expected, got)
 	}
-	require.Equal(t, true, mockClient.DidTicketCreatedMessageAck(), "ticket created messages did not ack")
+	require.Equal(t, true, ack, "ticket created messages did not ack")
 }
 
 func TestSubscribeTicketUpdated(t *testing.T) {
@@ -51,16 +54,17 @@ func TestSubscribeTicketUpdated(t *testing.T) {
 		ticket.Version += 1
 		ticket.Title = "updated_title"
 
-		msg, didAck := publishAndConsumeTicketUpdatedMessage(t, ticket)
+		ticketId, didAck := handleTicketUpdatedMessage(t, ticket)
+		require.Equal(t, true, didAck, "The ticket updated message has not been acked")
+
 		// Find the updated ticket.
-		updatedTicket, err := db.TicketRepository().FindByID(loggerCtx, msg.TicketID)
+		updatedTicket, err := db.TicketRepository().FindByID(ctx, ticketId)
 
 		// Finding should has no error.
 		require.NoError(t, err, "could not find the ticket")
 		// The updated ticket should be equal to the original.
 		require.Equal(t, *ticket, *updatedTicket, "the updated ticket is not equal to the original")
 		// The ticket updated message should be acked.
-		require.Equal(t, true, didAck, "the updated ticket message did not ack")
 	})
 
 	t.Run("not acks the ticket updated message due to the ticket's version out of sync", func(t *testing.T) {
@@ -71,7 +75,7 @@ func TestSubscribeTicketUpdated(t *testing.T) {
 		// Update the version to skip one version
 		ticket.Version += 2
 
-		_, didAck := publishAndConsumeTicketUpdatedMessage(t, ticket)
+		_, didAck := handleTicketUpdatedMessage(t, ticket)
 		require.Equal(t, false, didAck, "the message acked")
 	})
 
@@ -85,7 +89,7 @@ func TestSubscribeTicketUpdated(t *testing.T) {
 		ticket.Title = "v3"
 
 		// First consumptin with version of 3, expect to the message has not been acked.
-		_, didAck := publishAndConsumeTicketUpdatedMessage(t, ticket)
+		_, didAck := handleTicketUpdatedMessage(t, ticket)
 		require.Equal(t, false, didAck, "the v2 message acked")
 
 		// Down the version to fake the ticket of second version.
@@ -93,18 +97,18 @@ func TestSubscribeTicketUpdated(t *testing.T) {
 		ticket.Title = "v2"
 
 		// This time we expect the ticket should be acked.
-		_, didAck = publishAndConsumeTicketUpdatedMessage(t, ticket)
+		_, didAck = handleTicketUpdatedMessage(t, ticket)
 		require.Equal(t, true, didAck, "the v1 message did not ack")
 
 		// Increase the version to fake re-delivering of the previous message that has not been acked.
 		ticket.Version += 1
 		ticket.Title = "v3"
 		// This time we expect the ticket should be acked.
-		_, didAck = publishAndConsumeTicketUpdatedMessage(t, ticket)
+		_, didAck = handleTicketUpdatedMessage(t, ticket)
 		require.Equal(t, true, didAck, "the v2 message did not ack")
 
 		// Find the updated ticket then expects it to identical to the v3 ticket.
-		updatedTicket, err := db.TicketRepository().FindByID(loggerCtx, ticket.ID)
+		updatedTicket, err := db.TicketRepository().FindByID(ctx, ticket.ID)
 		require.NoError(t, err, "could not find the ticket")
 		require.Equal(t, *ticket, *updatedTicket)
 	})
@@ -119,26 +123,15 @@ func buildAndSaveTicket(t *testing.T) *database.Ticket {
 		Price:   234,
 		Version: 1,
 	}
-	_, err := db.TicketRepository().Insert(loggerCtx, ticket)
+	_, err := db.TicketRepository().Insert(ctx, ticket)
 	require.NoError(t, err, "could not insert a ticket")
 	return ticket
 }
 
-func consumeMessage(t *testing.T, nats *nats.MockClient) {
-	// Waiting for the message has been published.
-	time.Sleep(time.Second * 3)
-	_, err := NewService(loggerCtx, db, nats)
-	if err != nil {
-		t.Fatalf("could not consume the message: %v", err)
-	}
-	// Waiting for consumer handlers finish their tasks.
-	time.Sleep(time.Second * 2)
-}
-
-func publishAndConsumeTicketUpdatedMessage(
+func handleTicketUpdatedMessage(
 	t *testing.T,
 	ticket *database.Ticket,
-) (*streaming.TicketUpdatedMessage, bool) {
+) (string, bool) {
 	client := &nats.MockClient{}
 	msg := &streaming.TicketUpdatedMessage{
 		TicketID:      ticket.ID,
@@ -146,12 +139,12 @@ func publishAndConsumeTicketUpdatedMessage(
 		TicketPrice:   ticket.Price,
 		TicketVersion: ticket.Version,
 	}
-	removeErr(client.TicketUpdatedPublisher(loggerCtx)).Publish(loggerCtx, msg)
 
-	consumeMessage(t, client)
-	return msg, client.DidTicketUpdatedMessageAck()
-}
-
-func removeErr[T any](res T, _ error) T {
-	return res
+	svc, err := NewService(ctx, db, client)
+	if err != nil {
+		t.Fatalf("could not initialize service: %v", err)
+	}
+	ack := false
+	svc.handleTicketUpdated(ctx)(msg, func() error { ack = true; return nil })
+	return msg.TicketID, ack
 }

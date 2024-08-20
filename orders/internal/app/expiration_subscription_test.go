@@ -1,8 +1,6 @@
 package app
 
 import (
-	"os/signal"
-	"syscall"
 	"testing"
 	"time"
 
@@ -17,10 +15,6 @@ import (
 func TestExpirationListener(t *testing.T) {
 	// Run test in parallel.
 	t.Parallel()
-
-	// Get context that can be cancel by signal.
-	ctx, stop := signal.NotifyContext(loggerCtx, syscall.SIGINT, syscall.SIGTERM)
-	defer stop()
 
 	// Insert a ticket to database.
 	ticket := &database.Ticket{
@@ -53,24 +47,16 @@ func TestExpirationListener(t *testing.T) {
 
 	// Get a publisher.
 	mock := &nats.MockClient{}
-	pub, err := mock.ExpirationCompletedPublisher(ctx)
-	require.NoError(t, err, "could not get a publisher")
 
-	// Publish the message.
-	require.NoError(t, pub.Publish(ctx, msg), "could not publish a message")
-
-	// Consume the message.
-	_, err = NewService(ctx, db, mock)
-	require.NoError(t, err, "could not cosume the message")
-
-	// Wait for consuming then send a signal(Ctrl+C) to continue the test.
-	<-ctx.Done()
-
-	// Require the expiration message to be acked.
-	require.Equal(t, true, mock.DidExpirationCompletedMessageAck(), "the expiration message has not been acked")
+	// Initialize service.
+	svc, err := NewService(ctx, db, mock)
+	require.NoError(t, err, "could not initialize service")
+	ack := false
+	svc.handleOrderExpiration(msg, func() error { ack = true; return nil })
+	require.Equal(t, true, ack, "The expiration message has not been acked")
 
 	// Find the updated order.
-	ticketOrder, err := db.OrderRepository().FindTicketOrderByOrderID(loggerCtx, msg.OrderId)
+	ticketOrder, err := db.OrderRepository().FindTicketOrderByOrderID(ctx, msg.OrderId)
 	require.NoError(t, err, "could not find the updated order", "error", err)
 
 	// Require to found.

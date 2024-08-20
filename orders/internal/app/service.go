@@ -79,9 +79,31 @@ func NewService(ctx context.Context, db database.Database, s streaming.OrderStre
 		return nil, err
 	}
 
-	// TODO: service.message handler implementation only, not subscripton methods.
-	if err := svc.Subscribe(ctx); err != nil {
-		logger.Errorw("service could not subscribe", "error", err)
+	ticketCreatedSub, err := s.TicketCreatedConsumer(
+		ctx,
+		streaming.DefaultConsumeErrorHandler(ctx),
+		streaming.TicketCreatedStreamConfig.Subjects[0],
+	)
+	if err != nil {
+		logger.Errorw("Could not get Ticket created consumer", "error", err)
+		return nil, err
+	}
+	ticketUpdatedSub, err := s.TicketUpdatedConsumer(
+		ctx,
+		streaming.DefaultConsumeErrorHandler(ctx),
+		streaming.TicketUpdatedStreamConfig.Subjects[0],
+	)
+	if err != nil {
+		logger.Errorw("Could not get Ticket updated consumer", "error", err)
+		return nil, err
+	}
+
+	if _, err := ticketCreatedSub.Consume(ctx, svc.handleTicketCreated(ctx)); err != nil {
+		logger.Errorw("Could not cosume Ticket created message", "error", err)
+		return nil, err
+	}
+	if _, err := ticketUpdatedSub.Consume(ctx, svc.handleTicketUpdated(ctx)); err != nil {
+		logger.Errorw("Could not consume Ticket updated message", "error", err)
 		return nil, err
 	}
 	return svc, nil
@@ -329,19 +351,5 @@ func (s *Service) UpdateOrder(ctx context.Context, input *UpdateOrderInput) erro
 		}
 	}
 
-	return nil
-}
-
-func (s *Service) Subscribe(ctx context.Context) error {
-	subscriptions := []func(context.Context) error{
-		s.subscribeTicketCreated,
-		s.subscribeTicketUpdated,
-	}
-
-	for _, subscribe := range subscriptions {
-		if err := subscribe(ctx); err != nil {
-			return err
-		}
-	}
 	return nil
 }
