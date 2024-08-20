@@ -6,8 +6,10 @@ name: Go
 on:
   push:
     branches: [ "main" ]
+    paths: [ "expiration/**" ]
   pull_request:
     branches: [ "main" ]
+    paths: [ "expiration/**" ]
 
 jobs:
 
