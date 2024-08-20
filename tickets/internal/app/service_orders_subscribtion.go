@@ -7,9 +7,9 @@ import (
 	"github.com/matthxwpavin/ticketing/streaming"
 )
 
-func (s *Service) subscribeOrderCreated(ctx context.Context) error {
-	logger := sugar.FromContext(ctx)
-	_, err := s.orderCreatedSub.Consume(ctx, func(msg *streaming.OrderCreatedMessage, ack streaming.AckFunc) {
+func (s *Service) handleOrderCreated(ctx context.Context) streaming.JsonMessageHandler[streaming.OrderCreatedMessage] {
+	return func(msg *streaming.OrderCreatedMessage, ack streaming.AckFunc) {
+		logger := sugar.FromContext(ctx)
 		logger = logger.With("order_id", msg.OrderId, "ticket_id", msg.Ticket.Id)
 		logger.Infoln("an order created event received")
 		ticket, err := s.tr.FindByID(ctx, msg.Ticket.Id)
@@ -40,11 +40,7 @@ func (s *Service) subscribeOrderCreated(ctx context.Context) error {
 		if err := ack(); err != nil {
 			logger.Errorw("could not ack the message", "error", err)
 		}
-	})
-	if err != nil {
-		logger.Errorw("could not do subscription", "error", err)
 	}
-	return err
 }
 
 func (s *Service) handleOrderCanceled(ctx context.Context) streaming.JsonMessageHandler[streaming.OrderCancelledMessage] {
@@ -63,6 +59,7 @@ func (s *Service) handleOrderCanceled(ctx context.Context) streaming.JsonMessage
 		}
 
 		ticket.OrderId = ""
+		ticket.Version += 1
 		if err := s.tr.UpdateByID(ctx, ticket.ID, ticket); err != nil {
 			logger.Errorw("could not update the ticket", "error", err)
 			return

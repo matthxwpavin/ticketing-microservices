@@ -68,23 +68,12 @@ func NewService(
 		logger.Errorw("could not subscribe order canceled", "error", err)
 		return nil, err
 	}
-
-	if err := svc.Subscribe(ctx); err != nil {
+	if _, err := orderCreatedSub.Consume(ctx, svc.handleOrderCreated(ctx)); err != nil {
+		logger.Errorw("Could not subscribe order created", "error", err)
 		return nil, err
 	}
-	return svc, nil
-}
 
-func (s *Service) Subscribe(ctx context.Context) error {
-	subscriptions := []func(context.Context) error{
-		s.subscribeOrderCreated,
-	}
-	for _, subscribe := range subscriptions {
-		if err := subscribe(ctx); err != nil {
-			return err
-		}
-	}
-	return nil
+	return svc, nil
 }
 
 type Ticket struct {

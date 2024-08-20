@@ -26,6 +26,12 @@ func TestSubscribeOrderCreated(t *testing.T) {
 	_, err := db.TicketRepository().Insert(ctx, ticket)
 	require.NoError(t, err, "could not insert a ticket")
 
+	natsMock := &nats.MockClient{}
+	// Consume the order created message
+	srv, err := NewService(ctx, db, natsMock)
+	// Expect consumption success.
+	require.NoError(t, err, "Could not initialize service")
+
 	// Fake an order created message.
 	msg := &streaming.OrderCreatedMessage{
 		OrderId:        primitive.NewObjectID().Hex(),
@@ -36,16 +42,10 @@ func TestSubscribeOrderCreated(t *testing.T) {
 	msg.Ticket.Id = ticket.ID
 	msg.Ticket.Price = ticket.Price
 
-	natsMock := &nats.MockClient{}
-	pub, _ := natsMock.OrderCreatedPublisher(ctx)
-	pub.Publish(ctx, msg)
-	// Consume the order created message
-	_, err = NewService(ctx, db, natsMock)
-	// Expect consumption success.
-	require.NoError(t, err, "could not consume the message")
-
+	ack := false
+	srv.handleOrderCreated(ctx)(msg, func() error { ack = true; return nil })
 	// Expect the message has been acked.
-	require.Equal(t, true, natsMock.DidOrderCreatedMessageAck(), "the order created message didn't ack")
+	require.Equal(t, true, ack, "the order created message didn't ack")
 
 	// Find the updated ticket.
 	updatedTicket, err := db.TicketRepository().FindByID(ctx, msg.Ticket.Id)
@@ -79,14 +79,15 @@ func TestSubscribeOrderCanceled(t *testing.T) {
 	}
 	msg.Ticket.Id = ticket.ID
 
-	// Publish the order cancelled message.
 	natsMock := &nats.MockClient{}
-	pub, _ := natsMock.OrderCancelledPublisher(ctx)
-	pub.Publish(ctx, msg)
 
 	// Consume the message.
-	_, err = NewService(ctx, db, natsMock)
-	require.NoError(t, err, "could not consume the order cancelled message")
+	srv, err := NewService(ctx, db, natsMock)
+	require.NoError(t, err, "Could not initialize service")
+
+	ack := false
+	srv.handleOrderCanceled(ctx)(msg, func() error { ack = true; return nil })
+	require.Equal(t, true, ack)
 
 	// Find the updated ticket by the message.
 	ticket, err = db.TicketRepository().FindByID(ctx, ticket.ID)
@@ -95,5 +96,4 @@ func TestSubscribeOrderCanceled(t *testing.T) {
 	// Expect no order id attatched to the ticket.
 	require.Equal(t, "", ticket.OrderId, "the ticket's order id is not empty")
 	require.Equal(t, int32(3), ticket.Version, "the ticket's version is unexpected")
-	require.Equal(t, true, natsMock.DidOrderCancelledMessageAck(), "the order cancelled messsage has not been acked")
 }
