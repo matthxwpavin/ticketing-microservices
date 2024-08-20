@@ -6,8 +6,10 @@ name: orders-test
 on:
   push:
     branches: [ "main" ]
+    paths: [ "orders/**" ]
   pull_request:
     branches: [ "main" ]
+    paths: [ "orders/**" ]
 
 jobs:
 
