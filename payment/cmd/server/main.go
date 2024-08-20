@@ -32,7 +32,7 @@ func main() {
 		env.MongoURI,
 		env.JwtSecret,
 	}); err != nil {
-		logger.Fatalw("check env failed", "error", err)
+		logger.Fatalw("Failed to check ENV", "error", err)
 	}
 
 	if err := run(ctx); err != nil {
