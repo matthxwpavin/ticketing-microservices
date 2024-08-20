@@ -55,7 +55,7 @@ func run(ctx context.Context) error {
 	// Connect to the database.
 	db, err := mongo.Connect(ctx)
 	if err != nil {
-		logger.Errorw("could not connect to database", "error", err)
+		logger.Errorw("Could not connect to database", "error", err)
 		return err
 	}
 	// Disconnect the database when main function returns.
