@@ -1,0 +1,26 @@
+name: auth-deployment
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: [ "auth/**" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: cd auth && docker build -t matthxwpavin/ticketing/auth .
+
+    - name: Login to Docker hub
+      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Push the Docker image
+      run: docker push matthxwpavin/ticketing/auth
