@@ -6,8 +6,7 @@ WORKDIR /usr/src/app
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
-RUN go install github.com/air-verse/air@latest
-
 COPY . .
+RUN go build -v -o /usr/local/bin/app ./cmd/server
 
-CMD ["air", "-c", ".air.toml"]
+CMD ["app"]
