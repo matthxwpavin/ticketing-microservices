@@ -6,50 +6,50 @@ build:
   local:
     push: false
   artifacts:
-    - image: matthxwpavin/ticketing/auth
+    - image: matthxwpavin/ticketing-auth
       context: auth
       docker:
-        dockerfile: Dockerfile
+        dockerfile: auth/Dockerfile.dev
       sync:
         manual:
           - dest: .
             src: '**/*.go'
-    - image: matthxwpavin/ticketing/client
+    - image: matthxwpavin/ticketing-client
       context: client
       docker:
-        dockerfile: Dockerfile
+        dockerfile: client/Dockerfile
       sync:
         manual:
           - src: '**/*.jsx'
             dest: .
-    - image: matthxwpavin/ticketing/tickets
+    - image: matthxwpavin/ticketing-tickets
       context: tickets
       docker:
-        dockerfile: Dockerfile
+        dockerfile: tickets/Dockerfile.dev
       sync:
         manual:
           - dest: .
             src: '**/*.go'
-    - image: matthxwpavin/ticketing/orders
+    - image: matthxwpavin/ticketing-orders
       context: orders
       docker:
-        dockerfile: Dockerfile
+        dockerfile: orders/Dockerfile.dev
       sync:
         manual:
           - dest: .
             src: '**/*.go'
-    - image: matthxwpavin/ticketing/expiration
+    - image: matthxwpavin/ticketing-expiration
       context: expiration
       docker:
-        dockerfile: Dockerfile
+        dockerfile: expiration/Dockerfile.dev
       sync:
         manual:
           - dest: .
             src: '**/*.go'
-    - image: matthxwpavin/ticketing/payment
+    - image: matthxwpavin/ticketing-payment
       context: payment
       docker:
-        dockerfile: Dockerfile
+        dockerfile: payment/Dockerfile.dev
       sync:
         manual:
           - dest: .

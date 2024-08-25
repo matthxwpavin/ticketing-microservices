@@ -13,7 +13,7 @@ spec:
         app: payment
     spec:
       containers:
-        - image: matthxwpavin/ticketing/payment
+        - image: matthxwpavin/ticketing-payment
           name: payment
           ports:
             - containerPort: 3000

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: expiration
-          image: matthxwpavin/ticketing/expiration
+          image: matthxwpavin/ticketing-expiration
           resources:
             limits:
               memory: "512Mi"

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: tickets
-          image: matthxwpavin/ticketing/tickets
+          image: matthxwpavin/ticketing-tickets
           ports:
             - containerPort: 3000
               protocol: TCP

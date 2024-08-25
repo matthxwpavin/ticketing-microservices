@@ -6,6 +6,7 @@ require (
 	github.com/gorilla/mux v1.8.1
 	github.com/matthxwpavin/ticketing v1.4.26
 	github.com/stretchr/testify v1.8.4
+	github.com/stripe/stripe-go/v79 v79.7.0
 	go.mongodb.org/mongo-driver v1.16.0
 	golang.org/x/net v0.24.0
 )
@@ -38,7 +39,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	github.com/stripe/stripe-go/v79 v79.7.0 // indirect
 	github.com/xdg-go/pbkdf2 v1.0.0 // indirect
 	github.com/xdg-go/scram v1.1.2 // indirect
 	github.com/xdg-go/stringprep v1.0.4 // indirect
