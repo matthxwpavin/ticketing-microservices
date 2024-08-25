@@ -94,7 +94,7 @@ func (s *Service) SignInUser(ctx context.Context, creds *Credentials) (*User, er
 	}
 	if user == nil {
 		logger.Errorw("No user found", "email", creds.Email)
-		return nil, serviceutil.NewServiceFailureError("No user found")
+		return nil, serviceutil.NewServiceFailureError("no user found")
 	}
 
 	if err := passwd.Compare(user.Password, creds.Password); err != nil {
