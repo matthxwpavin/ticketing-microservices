@@ -99,7 +99,7 @@ func (s *Service) SignInUser(ctx context.Context, creds *Credentials) (*User, er
 
 	if err := passwd.Compare(user.Password, creds.Password); err != nil {
 		logger.Errorw("Failed to compare password", "error", err)
-		return nil, serviceutil.NewServiceFailureError("Failed to compare password")
+		return nil, serviceutil.NewServiceFailureError("failed to compare password")
 	}
 
 	return &User{
