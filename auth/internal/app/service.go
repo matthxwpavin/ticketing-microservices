@@ -51,7 +51,7 @@ func (s *Service) SignUpUser(ctx context.Context, creds *Credentials) (*User, er
 		return nil, err
 	} else if user != nil {
 		logger.Errorw("Email in use", "email", creds.Email)
-		return nil, serviceutil.NewServiceFailureError("Email in use")
+		return nil, serviceutil.NewServiceFailureError("email in use")
 	}
 
 	hashedPasswd, err := passwd.Generate(creds.Password)
