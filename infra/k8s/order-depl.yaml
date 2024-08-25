@@ -13,7 +13,7 @@ spec:
         app: orders
     spec:
       containers:
-        - image: matthxwpavin/ticketing/orders
+        - image: matthxwpavin/ticketing-orders
           name: orders
           ports:
             - containerPort: 3000
